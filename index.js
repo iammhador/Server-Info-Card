@@ -49,7 +49,7 @@ app.get("/", function (req, res) {
   res.send("Server is working");
 });
 
-//# Console Listing Code:
+//# Console Listing Code
 app.listen(port, function () {
   console.log(`listening on port ${port}`);
 });
