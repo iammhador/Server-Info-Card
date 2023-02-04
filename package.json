@@ -4,5 +4,23 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "mongodb": "^4.13.0"
-  }
+  },
+  "name": "server-info-card",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iammhador/Server-Info-Card.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/iammhador/Server-Info-Card/issues"
+  },
+  "homepage": "https://github.com/iammhador/Server-Info-Card#readme",
+  "description": ""
 }
