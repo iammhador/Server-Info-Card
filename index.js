@@ -9,50 +9,43 @@ app.use(cors());
 app.use(express.json());
 
 //# MongoDB:
-
 const { MongoClient, ServerApiVersion } = require("mongodb");
-const uri = `mongodb+srv://InfoCard:${process.env.DB_PASS}>@cluster0.hilqutw.mongodb.net/?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.hilqutw.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   serverApi: ServerApiVersion.v1,
 });
-
+console.log(uri);
 async function run() {
   try {
     const userCollection = client.db("infocard").collection("user");
     //Registrattion API
-
     app.post("/registration", async (req, res) => {
-      const user = req.body;
-      const result = await userCollection.insertOne(user);
-      res.send(result);
-    });
-    // app.post("/registration", async (req, res) => {
-    //   try {
-    // const { email, username } = req.body;
-    // const userExist = await userCollection.findOne({
-    //   $or: [{ email }, { username }],
-    // });
-    // if (userExist) {
-    //   return res.status(400).send({
-    //     message: userExist.email
-    //       ? "Email address is already registered"
-    //       : "username is taken",
-    //   });
-    // }
+      try {
+        const { email, username } = req.body;
+        const userExist = await userCollection.findOne({
+          $or: [{ email }, { username }],
+        });
+        if (userExist) {
+          return res.status(400).send({
+            message: userExist.email
+              ? "Email address is already registered"
+              : "username is taken",
+          });
+        }
 
-    // const newUser = { email, username };
-    // const filter = req.body;
-    // console.log(req.body);
-    // const result = await userCollection.insertOne(filter);
-    // return res.send(result);
-    //   } catch (error) {
-    //     return res
-    //       .status(500)
-    //       .send({ message: "An error occurred while registering try again" });
-    //   }
-    // });
+        const newUser = { email, username };
+        const filter = req.body;
+        console.log(req.body);
+        const result = await userCollection.insertOne(filter);
+        return res.send(result);
+      } catch (error) {
+        return res
+          .status(500)
+          .send({ message: "An error occurred while registering try again" });
+      }
+    });
   } finally {
   }
 }
