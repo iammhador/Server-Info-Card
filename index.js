@@ -20,12 +20,11 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     const userCollection = client.db("infocard").collection("user");
-    //Registrattion API
+    const profileCollection = client.db("infocard").collection("profile");
 
+    //# Registration API:
     app.get("/users", async (req, res) => {
       let filter = {};
-      // console.log(req.query);
-
       if (req.query.username) {
         filter = {
           username: req.query.username,
@@ -34,21 +33,6 @@ async function run() {
       const result = await userCollection.find(filter).toArray();
       return res.send(result);
     });
-
-    // app.get("/users/:email", async (req, res) => {
-    // console.log(req.params);
-    //   const email = req.params.email;
-    //   const query = { email };
-    //   const result = await userCollection.findOne(query);
-    //   res.send(result);
-    // });
-
-    // app.get("/users/:username", async (req, res) => {
-    //   const username = req.params.username;
-    //   const query = { username };
-    //   const result = await userCollection.findOne(query);
-    //   return res.send(result);
-    // });
 
     app.post("/registration", async (req, res) => {
       const { email, username } = req.body;
@@ -63,6 +47,19 @@ async function run() {
 
       const newUser = { email, username };
       const result = await userCollection.insertOne(newUser);
+      return res.send(result);
+    });
+
+    //# Update Profile Information:
+    app.get("/updateInformation", async (req, res) => {
+      const filter = {};
+      const result = await profileCollection.find(filter).toArray();
+      return res.send(result);
+    });
+
+    app.post("/updateInformation", async (req, res) => {
+      const updatedUser = req.body;
+      const result = await profileCollection.insertOne(updatedUser);
       return res.send(result);
     });
   } finally {
