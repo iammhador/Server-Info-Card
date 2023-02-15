@@ -24,13 +24,9 @@ async function run() {
 
     //# Registration API:
     app.get("/users", async (req, res) => {
-      let filter = {};
-      if (req.query.username) {
-        filter = {
-          username: req.query.username,
-        };
-      }
-      const result = await userCollection.find(filter).toArray();
+      const { username } = req.query;
+      const filter = username ? { username } : {};
+      const result = await profileCollection.find(filter).toArray();
       return res.send(result);
     });
 
