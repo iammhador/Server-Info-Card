@@ -23,10 +23,10 @@ async function run() {
     const profileCollection = client.db("infocard").collection("profile");
 
     //# Registration API:
-    app.get("/users", async (req, res) => {
+    app.get("/user", async (req, res) => {
       const { username } = req.query;
       const filter = username ? { username } : {};
-      const result = await profileCollection.find(filter).toArray();
+      const result = await userCollection.find(filter).toArray();
       return res.send(result);
     });
 
