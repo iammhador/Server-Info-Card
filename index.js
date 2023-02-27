@@ -24,8 +24,9 @@ async function run() {
 
     //# Registration API:
     app.get("/users", async (req, res) => {
-      const { username } = req.query;
-      const filter = username ? { username } : {};
+      // const { username } = req.query;
+      // const filter = username ? { username } : {};
+      const filter = {};
       const result = await userCollection.find(filter).toArray();
       return res.send(result);
     });
@@ -48,15 +49,33 @@ async function run() {
 
     //# Update Profile Information:
     app.get("/updateInformation", async (req, res) => {
-      const filter = {};
-      const result = await profileCollection.find(filter).toArray();
+      const query = {
+        username: req.query.username,
+      };
+      const result = await profileCollection.find(query).toArray();
       return res.send(result);
     });
 
+    //# Profile Information Post:
     app.post("/updateInformation", async (req, res) => {
       const updatedUser = req.body;
       const result = await profileCollection.insertOne(updatedUser);
       return res.send(result);
+    });
+
+    //# Edit Profile Information:
+    app.put("/updateInformation", async (req, res) => {
+      const username = req.query.username;
+      console.log(username);
+      const updatedInfo = req.body;
+      console.log(updatedInfo);
+      // const options = { upsert: true };
+      // const updateDoc = {
+      //   $set: {
+      //     plot: `A harvest of random numbers, such as: ${Math.random()}`
+      //   },
+      // };
+      // const result = await profileCollection.updateOne(filter, updateDoc, options);
     });
   } finally {
   }
