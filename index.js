@@ -65,17 +65,41 @@ async function run() {
 
     //# Edit Profile Information:
     app.put("/updateInformation", async (req, res) => {
-      const username = req.query.username;
-      console.log(username);
-      const updatedInfo = req.body;
-      console.log(updatedInfo);
-      // const options = { upsert: true };
-      // const updateDoc = {
-      //   $set: {
-      //     plot: `A harvest of random numbers, such as: ${Math.random()}`
-      //   },
-      // };
-      // const result = await profileCollection.updateOne(filter, updateDoc, options);
+      const collectInfo = req.body;
+      const filter = { username: req.query.username };
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: {
+          fullName: collectInfo.fullName,
+          location: collectInfo.location,
+          aboutYourself: collectInfo.aboutYourself,
+          designation: collectInfo.designation,
+          contactNumber: collectInfo.contactNumber,
+          websiteAddress: collectInfo.websiteAddress,
+          facebook: collectInfo.facebook,
+          instagram: collectInfo.instagram,
+          linkedIn: collectInfo.linkedIn,
+          twitter: collectInfo.twitter,
+          youTube: collectInfo.youTube,
+          whatsApp: collectInfo.whatsApp,
+          tikTok: collectInfo.tikTok,
+          gitHub: collectInfo.gitHub,
+          reddit: collectInfo.reddit,
+          snapchat: collectInfo.snapchat,
+          spotify: collectInfo.spotify,
+          pinterest: collectInfo.pinterest,
+          telegram: collectInfo.telegram,
+          medium: collectInfo.medium,
+          upwork: collectInfo.upwork,
+          fiverr: collectInfo.fiverr,
+        },
+      };
+      const result = await profileCollection.updateOne(
+        filter,
+        updateDoc,
+        options
+      );
+      res.send(result);
     });
   } finally {
   }
