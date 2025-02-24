@@ -24,9 +24,6 @@ async function run() {
     const userCollection = client.db("iammhador").collection("user");
     const profileCollection = client.db("iammhador").collection("profile");
 
-    //# Registration API:
-    const bcrypt = require("bcryptjs"); // Import bcrypt
-
     // Registration Route
     app.post("/registration", async (req, res) => {
       const { email, username, password } = req.body; // Get password from request body
