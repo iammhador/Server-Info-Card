@@ -11,7 +11,7 @@ app.use(express.json());
 //# MongoDB:
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const { query } = require("express");
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.cqqhz9d.mongodb.net/?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.hilqutw.mongodb.net/test?retryWrites=true&w=majority`;
 
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
@@ -20,8 +20,8 @@ const client = new MongoClient(uri, {
 });
 async function run() {
   try {
-    const userCollection = client.db("iammhador").collection("user");
-    const profileCollection = client.db("iammhador").collection("profile");
+    const userCollection = client.db("infocard").collection("user");
+    const profileCollection = client.db("infocard").collection("profile");
 
     //# Registration API:
     app.get("/users", async (req, res) => {
