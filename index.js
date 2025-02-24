@@ -1,5 +1,4 @@
 const express = require("express");
-const bcrypt = require("bcryptjs");
 require("dotenv").config();
 const cors = require("cors");
 const app = express();
@@ -24,50 +23,29 @@ async function run() {
     const userCollection = client.db("iammhador").collection("user");
     const profileCollection = client.db("iammhador").collection("profile");
 
-    // Registration Route
+    //# Registration API:
+    app.get("/users", async (req, res) => {
+      // const { username } = req.query;
+      // const filter = username ? { username } : {};
+      const filter = {};
+      const result = await userCollection.find(filter).toArray();
+      return res.send(result);
+    });
+
     app.post("/registration", async (req, res) => {
-      const { email, username, password } = req.body; // Get password from request body
-
-      if (!email || !username || !password) {
-        return res.status(400).send({ message: "All fields are required" });
-      }
-
+      const { email, username } = req.body;
       const usernameExist = await userCollection.findOne({ username });
       const emailExist = await userCollection.findOne({ email });
-
       if (emailExist) {
         return res.status(400).send({ message: "Email is already registered" });
       }
       if (usernameExist) {
-        return res.status(400).send({ message: "Username is taken" });
+        return res.status(400).send({ message: "username is taken" });
       }
 
-      // Encrypt (hash) the password
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(password, salt);
-
-      const newUser = { email, username, password: hashedPassword }; // Store hashed password
+      const newUser = { email, username };
       const result = await userCollection.insertOne(newUser);
-
       return res.send(result);
-    });
-
-    // Login Route
-    app.post("/login", async (req, res) => {
-      const { email, password } = req.body;
-
-      const user = await userCollection.findOne({ email });
-      if (!user) {
-        return res.status(400).send({ message: "Invalid email or password" });
-      }
-
-      // Compare hashed password with provided password
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) {
-        return res.status(400).send({ message: "Invalid email or password" });
-      }
-
-      return res.send({ message: "Login successful", user });
     });
 
     //# Update Profile Information:
