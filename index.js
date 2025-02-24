@@ -1,4 +1,5 @@
 const express = require("express");
+const bcrypt = require("bcryptjs");
 require("dotenv").config();
 const cors = require("cors");
 const app = express();
@@ -11,7 +12,7 @@ app.use(express.json());
 //# MongoDB:
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const { query } = require("express");
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.hilqutw.mongodb.net/test?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.cqqhz9d.mongodb.net/?retryWrites=true&w=majority`;
 
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
@@ -20,32 +21,56 @@ const client = new MongoClient(uri, {
 });
 async function run() {
   try {
-    const userCollection = client.db("infocard").collection("user");
-    const profileCollection = client.db("infocard").collection("profile");
+    const userCollection = client.db("iammhador").collection("user");
+    const profileCollection = client.db("iammhador").collection("profile");
 
     //# Registration API:
-    app.get("/users", async (req, res) => {
-      // const { username } = req.query;
-      // const filter = username ? { username } : {};
-      const filter = {};
-      const result = await userCollection.find(filter).toArray();
-      return res.send(result);
-    });
+    const bcrypt = require("bcryptjs"); // Import bcrypt
 
+    // Registration Route
     app.post("/registration", async (req, res) => {
-      const { email, username } = req.body;
+      const { email, username, password } = req.body; // Get password from request body
+
+      if (!email || !username || !password) {
+        return res.status(400).send({ message: "All fields are required" });
+      }
+
       const usernameExist = await userCollection.findOne({ username });
       const emailExist = await userCollection.findOne({ email });
+
       if (emailExist) {
         return res.status(400).send({ message: "Email is already registered" });
       }
       if (usernameExist) {
-        return res.status(400).send({ message: "username is taken" });
+        return res.status(400).send({ message: "Username is taken" });
       }
 
-      const newUser = { email, username };
+      // Encrypt (hash) the password
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+
+      const newUser = { email, username, password: hashedPassword }; // Store hashed password
       const result = await userCollection.insertOne(newUser);
+
       return res.send(result);
+    });
+
+    // Login Route
+    app.post("/login", async (req, res) => {
+      const { email, password } = req.body;
+
+      const user = await userCollection.findOne({ email });
+      if (!user) {
+        return res.status(400).send({ message: "Invalid email or password" });
+      }
+
+      // Compare hashed password with provided password
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return res.status(400).send({ message: "Invalid email or password" });
+      }
+
+      return res.send({ message: "Login successful", user });
     });
 
     //# Update Profile Information:
